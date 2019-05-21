@@ -1,0 +1,36 @@
+body {
+   display: flex;
+   justify-content: center;
+   align-content: center;
+   height: 100vh;
+}
+
+.game-box {
+   display: flex;
+   justify-content: space-between;
+   width: 420px;
+   height: 420px;
+   flex-wrap: wrap;
+}
+
+.square {
+   height: 200px;
+   width: 200px;
+   margin: 10px 0px;
+}
+
+#red {
+   background-color: red;
+}
+
+#blue {
+   background-color: blue;
+}
+
+#green {
+   background-color: green;
+}
+
+#yellow {
+   background-color: yellow;
+}
