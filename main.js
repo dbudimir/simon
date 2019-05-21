@@ -19,29 +19,35 @@ submit.addEventListener('click', e => {
     e.preventDefault();
     console.log('The game has started.');
     draw();
+    setTimeout(function() {
+        compShow();
+    }, 1000);
 });
 
 // Ads the users input to an array when they click a certain color.
 gameSquare.addEventListener('click', e => {
     e.preventDefault();
     const userSquare = event.target;
-    userSteps.push(userSquare.id);
-    console.log(userSteps);
+    console.log(`Comp steps: ${compSteps}`);
+    console.log(`User selection: ${userSteps}`);
+    if (userSteps.length === compSteps.length) {
+        userSteps.push(userSquare.id);
+        draw();
+        setTimeout(function() {
+            compShow();
+        }, 1000);
+    }
 });
 
 // This function will loop through the existing function and draw a new card.
 
-let score = 0; //  set your counter to 1
-
-function compShow() {
-    //  create a loop function
-    setTimeout(function() {
-        //  call a 3s setTimeout when the loop is called
-        console.log(compSteps[score]); //  your code here
-        score++; //  increment the counter
-        if (score < compSteps.length) {
-            //  if the counter < 10, call the loop function
-            compShow(); //  ..  again which will trigger another
-        } //  ..  setTimeout()
-    }, 2000);
-}
+const compShow = function() {
+    compSteps.forEach(function(color, index) {
+        setTimeout(function() {
+            document.querySelector(`#${color}`).setAttribute('class', 'square flash');
+            setTimeout(function() {
+                document.querySelector(`#${color}`).setAttribute('class', 'square');
+            }, 1000);
+        }, 1500 * index);
+    });
+};
