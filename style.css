@@ -2,7 +2,10 @@ body {
    display: flex;
    justify-content: center;
    align-content: center;
+   flex-direction: column;
    height: 100vh;
+   padding: 48px;
+   background-color: aliceblue;
 }
 
 .game-over {
@@ -40,75 +43,112 @@ body {
 .game-box {
    display: flex;
    justify-content: space-between;
-   width: 420px;
-   height: 420px;
-   flex-wrap: wrap;
-   margin-top: 120px;
-}
-
-.square:before {
-   position: absolute;
-   content: ' ';
-   top: 0;
-   left: 0;
    width: 100%;
    height: 100%;
+   max-width: 720px;
+   max-height: 720px;
+   flex-wrap: wrap;
+   margin: 0 auto;
+   position: relative;
+   background-color: #ffffff;
+   padding: 1%;
+   border-radius: 20px;
+   box-shadow: 0 8px 24px 0 rgba(151, 157, 170, 0.4), inset 0 0 1px 0 #979daa;
+}
+
+.container {
+   width: 420px;
+   margin: 12px auto;
+}
+
+.cats-temp {
    display: none;
-   z-index: 0;
-   background-color: #000000;
+}
+
+.score {
+   position: absolute;
+   height: 100px;
+   width: 100px;
+   border-radius: 100px;
+   background: #ffffff;
+   margin: 0 auto;
+   left: 0;
+   right: 0;
+   transform: translateY(310px);
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: space-between;
 }
 
 .square {
    position: relative;
-   height: 200px;
-   width: 200px;
-   margin: 10px 0px;
+   width: 48%;
+   height: auto;
+   margin: 1%;
+   border-radius: 20px;
 }
 
 #red {
    background: url('http://sohme.com/wp-content/uploads/2015/07/red-180x180.png');
+   background-size: 200%;
+   background-position: center;
 }
 
 #blue {
    background: url('http://sohme.com/wp-content/uploads/2015/07/blue.png');
+   background-size: 200%;
+   background-position: center;
 }
 
 #green {
    background: url('https://www.trialsbits.co.uk/images/thick_vinyl_sheet_green.jpg');
+   background-size: 200%;
+   background-position: center;
 }
 
 #yellow {
    background: url('https://www.labelmaster.com/product/image/medium/btv06y_0.jpg');
+   background-size: 200%;
+   background-position: center;
 }
 
 .flash {
    -webkit-animation-name: flash-animation;
-   -webkit-animation-duration: 1.5s;
+   -webkit-animation-duration: 1s;
    -webkit-animation-iteration-count: 1;
    animation-name: flash-animation;
-   animation-duration: 1.5s;
+   animation-duration: 1s;
    animation-iteration-count: 1;
+   animation-timing-function: cubic-bezier(0.42, 0, 0.58, 1);
 }
 
 @-webkit-keyframes flash-animation {
    0% {
-      background-color: #ffffff;
       opacity: 0;
    }
-
+   17% {
+      opacity: 1;
+   }
+   25% {
+      opacity: 1;
+   }
    100% {
-      background-color: #ffffff;
       opacity: 1;
    }
 }
 
 @keyframes flash-animation {
    0% {
-      background-color: #ffffff;
       opacity: 0;
    }
+   17% {
+      opacity: 1;
+   }
+   25% {
+      opacity: 1;
+   }
    100% {
-      background-color: #ffffff;
       opacity: 1;
    }
 }

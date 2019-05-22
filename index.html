@@ -8,21 +8,39 @@
       <title>Simon</title>
    </head>
    <body>
-      <div class="container">
+         
          <div class="game-over"><div id="sorry"><span>Sorry, the next color was <span id="real-answer"></span></span></div>
             <span id="start-over">Try Again?</span>
          </div>
-         </div>
+
+         <dvi class="header"></dvi>
+      
          <div class="game-box">
             <div class="square" id="red"></div>
             <div class="square" id="blue"></div>
             <div class="square" id="yellow"></div>
             <div class="square" id="green"></div>
+            <div class="score">
+            <span>You've lasted</span>
+            <span class="calc-score">0</span>
+            <span>rounds</span>
+            </div>
+            
          </div>
-         <input type="submit" id="start-game" </input>
-         <span class="score"></span>
-      </div>
+         
+         <div class="container">
+               
+               <input type="submit" id="start-game" value="Start Game"></input>
+               <input type="submit" id="cat-mode" value="Start Cat Mode"></input>
+            </div>
 
+            <div class="cats-temp">
+               <img src="" id="random-cat">
+               <img src="" id="cat-at-bat">
+            </div>
+            
+         
+      </div>
       <script src="./main.js"></script>
    </body>
 </html>

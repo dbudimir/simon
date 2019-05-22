@@ -7,6 +7,7 @@ const gameSquare = document.querySelector('.game-box');
 const submit = document.querySelector('#start-game');
 
 let initial;
+let mode = 'normal';
 
 function startTimer() {
     initial = setTimeout(function() {
@@ -17,7 +18,6 @@ function startTimer() {
 // Ads the first color to the routine when the user clicks start.
 submit.addEventListener('click', e => {
     e.preventDefault();
-    console.log('The game has started.');
     draw();
     setTimeout(function() {
         compShow();
@@ -41,20 +41,16 @@ gameSquare.addEventListener('click', e => {
     setTimeout(function() {
         userSquare.setAttribute('class', 'square');
     }, 500);
-    console.log(`User clicked on ${userSquare.id}`);
-    console.log(`Current game color ${currentGameColor}`);
-    console.log(`User step ${currentUserStep}`);
     // Clear and reset the timer
     clearTimeout(initial);
     startTimer();
     // Incrament current user step by 1
     currentUserStep += 1;
-    // debugger;
     if (currentGameColor !== userSquare.id) {
         clearTimeout(initial);
         document.querySelector('.game-over').setAttribute('style', 'display:block;');
     } else if (currentUserStep === compSteps.length) {
-        document.querySelector('.score').innerHTML = compSteps.length;
+        document.querySelector('.calc-score').innerHTML = compSteps.length;
         clearTimeout(initial);
         draw();
         setTimeout(function() {
@@ -66,13 +62,68 @@ gameSquare.addEventListener('click', e => {
 const compShow = function() {
     compSteps.forEach(function(color, index) {
         setTimeout(function() {
-            document.querySelector(`#${color}`).setAttribute('class', 'square flash');
+            const currentSquare = document.querySelector(`#${color}`);
+            currentSquare.setAttribute('class', 'flash square');
+            if (mode === 'cat') {
+                currentSquare.setAttribute(
+                    'style',
+                    `background: url(${catBuffer[index]}); background-size: cover; background-position: center;`
+                );
+            }
+            // debugger;
             setTimeout(function() {
-                document.querySelector(`#${color}`).setAttribute('class', 'square');
+                currentSquare.setAttribute('class', 'square');
+                if (mode === 'cat') {
+                    currentSquare.removeAttribute('style', `background: url(${catBuffer[index]})`);
+                }
             }, 1000);
             clearTimeout(initial);
             startTimer();
         }, 1250 * index);
     });
     currentUserStep = 0;
+};
+
+const reload = document.querySelector('#start-over');
+reload.addEventListener('click', e => {
+    location.reload();
+});
+
+// //////////////////////////////////////////////////////////////////////////////////////////
+
+const url = 'https://api.thecatapi.com/v1/images/search';
+const catBuffer = [];
+
+const catMode = document.querySelector('#cat-mode');
+catMode.addEventListener('click', () => {
+    mode = 'cat';
+    getData(url);
+    document.querySelector('#random-cat').setAttribute('src', `${catBuffer[1]}`);
+    document.querySelector('#cat-at-bat').setAttribute('src', `${catBuffer[2]}`);
+    draw();
+    setTimeout(function() {
+        compShow();
+    }, 2000);
+});
+
+const getData = function(myUrl) {
+    fetch(myUrl, {
+        headers: {
+            'x-api-key': '599c1be4-1756-47c1-b525-4d7ef4cc541f',
+        },
+    })
+        .then(res => res.json())
+        .then(data => {
+            catBuffer.push(data[0].url);
+        })
+        .catch(err => {
+            alert('error');
+            console.log('something went wrong...', err);
+        });
+};
+
+window.onload = function prepCats() {
+    for (let i = 0; i < 4; i++) {
+        getData(url);
+    }
 };
