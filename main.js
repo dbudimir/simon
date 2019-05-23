@@ -1,28 +1,43 @@
-const colors = ['red', 'blue', 'yellow', 'green'];
+const url = 'https://api.thecatapi.com/v1/images/search';
+const catBuffer = [];
 
+const colors = ['red', 'blue', 'yellow', 'green'];
 const compSteps = [];
+
 let currentUserStep = 0;
 
 const gameSquare = document.querySelector('.game-box');
 const submit = document.querySelector('#start-game');
-
-let initial;
+const catMode = document.querySelector('#cat-mode');
+const errorMsg = document.querySelector('#sorry');
 let mode = 'normal';
 
+let initial;
 function startTimer() {
     initial = setTimeout(function() {
         alert('Too slow');
     }, 5000);
 }
 
-// Ads the first color to the routine when the user clicks start.
-submit.addEventListener('click', e => {
-    e.preventDefault();
+const startGame = function() {
+    document.querySelector('.game-over').setAttribute('style', 'display:none;');
     draw();
     setTimeout(function() {
         compShow();
     }, 2000);
-});
+};
+submit.addEventListener('click', startGame);
+
+const startCatMode = function() {
+    document.querySelector('.game-over').setAttribute('style', 'display:none;');
+    mode = 'cat';
+    getData(url);
+    draw();
+    setTimeout(function() {
+        compShow();
+    }, 2000);
+};
+catMode.addEventListener('click', startCatMode);
 
 // Draws a random color and adds it to compSteps array.
 function draw() {
@@ -46,11 +61,28 @@ gameSquare.addEventListener('click', e => {
     startTimer();
     // Incrament current user step by 1
     currentUserStep += 1;
-    if (currentGameColor !== userSquare.id) {
+    if (compSteps.length === 0) {
         clearTimeout(initial);
         document.querySelector('.game-over').setAttribute('style', 'display:block;');
+        errorMsg.innerHTML = `<span>Pick a mode before we get started.</span>`;
+        errorMsg.insertAdjacentHTML(
+            'beforeend',
+            "<span onclick='startGame()' class='start-over' id='start-game'>Normal Mode</span>"
+        );
+        errorMsg.insertAdjacentHTML(
+            'beforeend',
+            "<span onclick='startCatMode()' class='start-over' id='cat-mode'>Cat Mode</span>"
+        );
+    } else if (currentGameColor !== userSquare.id) {
+        clearTimeout(initial);
+        document.querySelector('.game-over').setAttribute('style', 'display:block;');
+        errorMsg.innerHTML = `<span>Sorry, the next color was <span id="real-answer">${currentGameColor}</span></span>`;
+        errorMsg.insertAdjacentHTML('beforeend', "<span onclick='reload()' class='start-over'>Try Again?</span>");
+        document
+            .querySelector('#real-answer')
+            .setAttribute('style', `text-transform: uppercase; color:  ${currentGameColor};`);
     } else if (currentUserStep === compSteps.length) {
-        document.querySelector('.calc-score').innerHTML = compSteps.length;
+        document.querySelector('.calc-score').innerHTML = compSteps.length + 1;
         clearTimeout(initial);
         draw();
         setTimeout(function() {
@@ -70,7 +102,6 @@ const compShow = function() {
                     `background: url(${catBuffer[index]}); background-size: cover; background-position: center;`
                 );
             }
-            // debugger;
             setTimeout(function() {
                 currentSquare.setAttribute('class', 'square');
                 if (mode === 'cat') {
@@ -84,27 +115,11 @@ const compShow = function() {
     currentUserStep = 0;
 };
 
-const reload = document.querySelector('#start-over');
-reload.addEventListener('click', e => {
+function reload() {
     location.reload();
-});
+}
 
 // //////////////////////////////////////////////////////////////////////////////////////////
-
-const url = 'https://api.thecatapi.com/v1/images/search';
-const catBuffer = [];
-
-const catMode = document.querySelector('#cat-mode');
-catMode.addEventListener('click', () => {
-    mode = 'cat';
-    getData(url);
-    document.querySelector('#random-cat').setAttribute('src', `${catBuffer[1]}`);
-    document.querySelector('#cat-at-bat').setAttribute('src', `${catBuffer[2]}`);
-    draw();
-    setTimeout(function() {
-        compShow();
-    }, 2000);
-});
 
 const getData = function(myUrl) {
     fetch(myUrl, {
@@ -126,7 +141,11 @@ window.onload = function prepCats() {
     for (let i = 0; i < 4; i++) {
         getData(url);
     }
+    // document.querySelector('#cat-at-bat').setAttribute('src', catBuffer[1]);
 };
+console.log(catBuffer);
+console.log(catBuffer[2]);
+document.querySelector('.cats-temp').innerHTML = `<img src="${catBuffer[0]}" id="random-cat"></img>`;
 
 // ////////////////////////////////////
 // Tilt effect
@@ -141,6 +160,13 @@ lightBox.addEventListener('mousemove', e => {
 });
 
 const tiltBox = document.querySelector('.js-tilt-container');
+const scoreCard = document.querySelector('.score');
+window.addEventListener('load', () => {
+    scoreCard.setAttribute('style', `transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px);`);
+});
+window.addEventListener('resize', () => {
+    scoreCard.setAttribute('style', `transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px);`);
+});
 
 tiltBox.addEventListener('mousemove', e => {
     const left = tiltBox.offsetLeft;
@@ -156,16 +182,8 @@ tiltBox.addEventListener('mousemove', e => {
     );
 
     const invertedX = Math.sign(cursFromCenterX) > 0 ? -Math.abs(cursFromCenterX) : Math.abs(cursFromCenterX);
-
-    // // Parallax transform on image
-    // tiltBox.classList.add('.js-perspective-neg');
-    // tiltBox.setAttribute(
-    //     'style',
-    //     `transform: translateY(${cursFromCenterY / 10}px) translateX(${-(invertedX / 10)}px) scale(1);`
-    // );
-    tiltBox.classList.remove('.leave');
 });
 
 tiltBox.addEventListener('mouseleave', () => {
-    tiltBox.classList.add('.leave');
+    tiltBox.setAttribute('style', 'transform: rotateX(0) rotateY(0);');
 });
