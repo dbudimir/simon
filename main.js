@@ -5,6 +5,7 @@ const redSound = document.querySelector('#red-sound');
 const blueSound = document.querySelector('#blue-sound');
 const yellowSound = document.querySelector('#yellow-sound');
 const greenSound = document.querySelector('#green-sound');
+const startSound = document.querySelector('#green-sound');
 
 let currentSound;
 
@@ -17,28 +18,29 @@ const gameSquare = document.querySelector('.game-box');
 const submit = document.querySelector('#start-game');
 const catMode = document.querySelector('#cat-mode');
 const errorMsg = document.querySelector('#sorry');
+
 let mode = 'normal';
 
 let initial;
 function startTimer() {
     initial = setTimeout(function() {
-        document.querySelector('.game-over').setAttribute('style', 'display:block;');
+        errorMsg.setAttribute('style', 'display:block;');
         errorMsg.innerHTML = `<span>You gotta be faster than that!</span>`;
         errorMsg.insertAdjacentHTML('beforeend', "<span onclick='reload()' class='start-over'>Try Again</span>");
     }, 5000);
 }
 
 const startGame = function() {
-    document.querySelector('.game-over').setAttribute('style', 'display:none;');
+    errorMsg.setAttribute('style', 'display:none;');
     draw();
     setTimeout(function() {
         compShow();
     }, 2000);
 };
-submit.addEventListener('click', startGame);
+// submit.addEventListener('click', startGame);
 
 const startCatMode = function() {
-    document.querySelector('.game-over').setAttribute('style', 'display:none;');
+    errorMsg.setAttribute('style', 'display:none;');
     mode = 'cat';
     getData(url);
     draw();
@@ -46,14 +48,27 @@ const startCatMode = function() {
         compShow();
     }, 2000);
 };
-catMode.addEventListener('click', startCatMode);
+// catMode.addEventListener('click', startCatMode);
+
+const startButton = function() {
+    clearTimeout(initial);
+    document.querySelector('.game-over').setAttribute('style', 'display:block;');
+    errorMsg.innerHTML = `<span>Pick a mode before we get started.</span>`;
+    errorMsg.insertAdjacentHTML(
+        'beforeend',
+        "<span onclick='startGame()' class='start-over' id='start-game'>Normal Mode</span>"
+    );
+    errorMsg.insertAdjacentHTML(
+        'beforeend',
+        "<span onclick='startCatMode()' class='start-over' id='cat-mode'>Cat Mode</span>"
+    );
+    document.querySelector('.score').innerHTML = "<span class='calc-score'>1</span><span class='round'>ROUND</span>";
+};
 
 // Draws a random color and adds it to compSteps array.
 function draw() {
     const randomIndex = Math.floor(Math.random() * colors.length);
     compSteps.push(colors[randomIndex]);
-    console.log(compSteps);
-    console.log(catBuffer);
 }
 
 // On click compare the current game color with compSepts at the index of current user step.
@@ -62,9 +77,10 @@ gameSquare.addEventListener('click', e => {
         e.preventDefault();
         const userSquare = e.target;
         const currentGameColor = compSteps[currentUserStep];
+        // Play sound
         eval(`${userSquare.id}Sound`).play();
         // Flash the selected square.
-        userSquare.setAttribute('class', 'square flash');
+        userSquare.setAttribute('class', 'flash');
         setTimeout(function() {
             userSquare.setAttribute('class', 'square');
         }, 500);
@@ -75,20 +91,10 @@ gameSquare.addEventListener('click', e => {
         currentUserStep += 1;
         getData(url);
         if (compSteps.length === 0) {
-            clearTimeout(initial);
-            document.querySelector('.game-over').setAttribute('style', 'display:block;');
-            errorMsg.innerHTML = `<span>Pick a mode before we get started.</span>`;
-            errorMsg.insertAdjacentHTML(
-                'beforeend',
-                "<span onclick='startGame()' class='start-over' id='start-game'>Normal Mode</span>"
-            );
-            errorMsg.insertAdjacentHTML(
-                'beforeend',
-                "<span onclick='startCatMode()' class='start-over' id='cat-mode'>Cat Mode</span>"
-            );
+            startButton();
         } else if (currentGameColor !== userSquare.id) {
             clearTimeout(initial);
-            document.querySelector('.game-over').setAttribute('style', 'display:block;');
+            errorMsg.setAttribute('style', 'display:block;');
             errorMsg.innerHTML = `<span>Sorry, the next color was <span id="real-answer">${currentGameColor}</span></span>`;
             errorMsg.insertAdjacentHTML('beforeend', "<span onclick='reload()' class='start-over'>Try Again</span>");
             document
@@ -104,6 +110,8 @@ gameSquare.addEventListener('click', e => {
                 compShow();
             }, 2000);
         }
+    } else {
+        startButton();
     }
 });
 
@@ -111,8 +119,7 @@ const compShow = function() {
     compSteps.forEach(function(color, index) {
         setTimeout(function() {
             const currentSquare = document.querySelector(`#${color}`);
-            currentSquare.setAttribute('class', 'flash square');
-            // currentSound = `${color}Sound`;
+            currentSquare.setAttribute('class', 'flash');
             eval(`${color}Sound`).play();
             if (mode === 'cat') {
                 currentSquare.setAttribute(
@@ -171,10 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
         <img src="${catBuffer[1]}" id="random-cat">`;
     });
 });
-
-// window.onload = function prepCats() {
-//     // document.querySelector('#cat-at-bat').setAttribute('src', catBuffer[1]);
-// };
 
 // ////////////////////////////////////
 // Tilt effect
