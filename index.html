@@ -4,14 +4,10 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-      <link href="https://fonts.googleapis.com/css?family=Racing+Sans+One&display=swap" rel="stylesheet">
       <link rel="stylesheet" href="./style.css" />
       <title>Simon</title>
    </head>
    <body>
-         
-         <div class="game-over"><div id="sorry"></div>
-         </div>
 
          <div class="header">
             <h1 class="first">SIMON!</h1>
@@ -21,6 +17,8 @@
          </div>
       
          <div class="game-box image-shadow js-tilt-container">
+            <div class="game-over"><div id="sorry"></div>
+            </div>
             <div class="square" id="red"></div>
             <div class="square" id="blue"></div>
             <div class="square" id="yellow"></div>
@@ -33,19 +31,20 @@
          </div>
          <div class="light"></div>
          
+         
          <div class="container">
-               
-               <span type="submit" class="button" id="start-game" value="Start Game">Start Game<span class="highlight">START GAME</span></span>
-               <span type="submit" class="button" id="cat-mode" value="Start Cat Mode">Start Cat Mode<span class="highlight">START CAT MODE</span></span>
-            </div>
+            <span type="submit" class="button" id="start-game" value="Start Game">Start Game<span class="highlight">START GAME</span></span>
+            <span type="submit" class="button" id="cat-mode" value="Start Cat Mode">Start Cat Mode<span class="highlight">START CAT MODE</span></span>
+         </div>
 
-            <div class="cats-temp">
-               <!-- <img src="" id="random-cat">
-               <img src="" id="cat-at-bat"> -->
-            </div>
+            <div class="cats-temp"></div>
             
          
       </div>
+      <audio preload="auto" src="./sounds/simonSound1.mp3" id="red-sound"></audio>
+      <audio preload="auto" src="./sounds/simonSound2.mp3" id="blue-sound"></audio>
+      <audio preload="auto" src="./sounds/simonSound4.mp3" id="yellow-sound"></audio>
+      <audio preload="auto" src="./sounds/simonSound3.mp3" id="green-sound"></audio>
       <script src="./main.js"></script>
    </body>
 </html>

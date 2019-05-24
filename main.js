@@ -1,6 +1,13 @@
 const url = 'https://api.thecatapi.com/v1/images/search';
 const catBuffer = [];
 
+const redSound = document.querySelector('#red-sound');
+const blueSound = document.querySelector('#blue-sound');
+const yellowSound = document.querySelector('#yellow-sound');
+const greenSound = document.querySelector('#green-sound');
+
+let currentSound;
+
 const colors = ['red', 'blue', 'yellow', 'green'];
 const compSteps = [];
 
@@ -15,7 +22,9 @@ let mode = 'normal';
 let initial;
 function startTimer() {
     initial = setTimeout(function() {
-        alert('Too slow');
+        document.querySelector('.game-over').setAttribute('style', 'display:block;');
+        errorMsg.innerHTML = `<span>You gotta be faster than that!</span>`;
+        errorMsg.insertAdjacentHTML('beforeend', "<span onclick='reload()' class='start-over'>Try Again</span>");
     }, 5000);
 }
 
@@ -44,50 +53,57 @@ function draw() {
     const randomIndex = Math.floor(Math.random() * colors.length);
     compSteps.push(colors[randomIndex]);
     console.log(compSteps);
+    console.log(catBuffer);
 }
 
 // On click compare the current game color with compSepts at the index of current user step.
 gameSquare.addEventListener('click', e => {
-    e.preventDefault();
-    const userSquare = e.target;
-    const currentGameColor = compSteps[currentUserStep];
-    // Flash the selected square.
-    userSquare.setAttribute('class', 'square flash');
-    setTimeout(function() {
-        userSquare.setAttribute('class', 'square');
-    }, 500);
-    // Clear and reset the timer
-    clearTimeout(initial);
-    startTimer();
-    // Incrament current user step by 1
-    currentUserStep += 1;
-    if (compSteps.length === 0) {
-        clearTimeout(initial);
-        document.querySelector('.game-over').setAttribute('style', 'display:block;');
-        errorMsg.innerHTML = `<span>Pick a mode before we get started.</span>`;
-        errorMsg.insertAdjacentHTML(
-            'beforeend',
-            "<span onclick='startGame()' class='start-over' id='start-game'>Normal Mode</span>"
-        );
-        errorMsg.insertAdjacentHTML(
-            'beforeend',
-            "<span onclick='startCatMode()' class='start-over' id='cat-mode'>Cat Mode</span>"
-        );
-    } else if (currentGameColor !== userSquare.id) {
-        clearTimeout(initial);
-        document.querySelector('.game-over').setAttribute('style', 'display:block;');
-        errorMsg.innerHTML = `<span>Sorry, the next color was <span id="real-answer">${currentGameColor}</span></span>`;
-        errorMsg.insertAdjacentHTML('beforeend', "<span onclick='reload()' class='start-over'>Try Again?</span>");
-        document
-            .querySelector('#real-answer')
-            .setAttribute('style', `text-transform: uppercase; color:  ${currentGameColor};`);
-    } else if (currentUserStep === compSteps.length) {
-        document.querySelector('.calc-score').innerHTML = compSteps.length + 1;
-        clearTimeout(initial);
-        draw();
+    if (e.target.classList.contains('square')) {
+        e.preventDefault();
+        const userSquare = e.target;
+        const currentGameColor = compSteps[currentUserStep];
+        eval(`${userSquare.id}Sound`).play();
+        // Flash the selected square.
+        userSquare.setAttribute('class', 'square flash');
         setTimeout(function() {
-            compShow();
-        }, 2000);
+            userSquare.setAttribute('class', 'square');
+        }, 500);
+        // Clear and reset the timer
+        clearTimeout(initial);
+        startTimer();
+        // Incrament current user step by 1
+        currentUserStep += 1;
+        getData(url);
+        if (compSteps.length === 0) {
+            clearTimeout(initial);
+            document.querySelector('.game-over').setAttribute('style', 'display:block;');
+            errorMsg.innerHTML = `<span>Pick a mode before we get started.</span>`;
+            errorMsg.insertAdjacentHTML(
+                'beforeend',
+                "<span onclick='startGame()' class='start-over' id='start-game'>Normal Mode</span>"
+            );
+            errorMsg.insertAdjacentHTML(
+                'beforeend',
+                "<span onclick='startCatMode()' class='start-over' id='cat-mode'>Cat Mode</span>"
+            );
+        } else if (currentGameColor !== userSquare.id) {
+            clearTimeout(initial);
+            document.querySelector('.game-over').setAttribute('style', 'display:block;');
+            errorMsg.innerHTML = `<span>Sorry, the next color was <span id="real-answer">${currentGameColor}</span></span>`;
+            errorMsg.insertAdjacentHTML('beforeend', "<span onclick='reload()' class='start-over'>Try Again</span>");
+            document
+                .querySelector('#real-answer')
+                .setAttribute('style', `text-transform: uppercase; color:  ${currentGameColor};`);
+        } else if (currentUserStep === compSteps.length) {
+            document.querySelector('.calc-score').innerHTML = compSteps.length + 1;
+            document.querySelector('.cats-temp').innerHTML = `<img src="${catBuffer[currentUserStep]}" id="random-cat">
+            <img src="${catBuffer[currentUserStep + 1]}" id="random-cat">`;
+            clearTimeout(initial);
+            draw();
+            setTimeout(function() {
+                compShow();
+            }, 2000);
+        }
     }
 });
 
@@ -96,6 +112,8 @@ const compShow = function() {
         setTimeout(function() {
             const currentSquare = document.querySelector(`#${color}`);
             currentSquare.setAttribute('class', 'flash square');
+            // currentSound = `${color}Sound`;
+            eval(`${color}Sound`).play();
             if (mode === 'cat') {
                 currentSquare.setAttribute(
                     'style',
@@ -137,15 +155,26 @@ const getData = function(myUrl) {
         });
 };
 
-window.onload = function prepCats() {
+// Preloads two cat images into the buffer.
+document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < 4; i++) {
         getData(url);
     }
-    // document.querySelector('#cat-at-bat').setAttribute('src', catBuffer[1]);
-};
-console.log(catBuffer);
-console.log(catBuffer[2]);
-document.querySelector('.cats-temp').innerHTML = `<img src="${catBuffer[0]}" id="random-cat"></img>`;
+    const promise = new Promise(function(resolve, reject) {
+        setTimeout(function() {
+            resolve(catBuffer);
+        }, 500);
+    });
+
+    promise.then(function(value) {
+        document.querySelector('.cats-temp').innerHTML = `<img src="${catBuffer[0]}" id="random-cat">
+        <img src="${catBuffer[1]}" id="random-cat">`;
+    });
+});
+
+// window.onload = function prepCats() {
+//     // document.querySelector('#cat-at-bat').setAttribute('src', catBuffer[1]);
+// };
 
 // ////////////////////////////////////
 // Tilt effect
@@ -162,10 +191,18 @@ lightBox.addEventListener('mousemove', e => {
 const tiltBox = document.querySelector('.js-tilt-container');
 const scoreCard = document.querySelector('.score');
 window.addEventListener('load', () => {
-    scoreCard.setAttribute('style', `transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px);`);
+    scoreCard.setAttribute(
+        'style',
+        `transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px); 
+        -webkit-transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px);`
+    );
 });
 window.addEventListener('resize', () => {
-    scoreCard.setAttribute('style', `transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px);`);
+    scoreCard.setAttribute(
+        'style',
+        `transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px); 
+        -webkit-transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px);`
+    );
 });
 
 tiltBox.addEventListener('mousemove', e => {
@@ -177,13 +214,17 @@ tiltBox.addEventListener('mousemove', e => {
     const cursFromCenterY = tiltBox.offsetHeight / 2 - cursPosY;
     tiltBox.setAttribute(
         'style',
-        `transform:
-    perspective(500px) rotateX(${cursFromCenterY / 120}deg) rotateY(${-(cursFromCenterX / 120)}deg) translateZ(10px);`
+        `transform: perspective(500px) rotateX(${cursFromCenterY / 120}deg) rotateY(${-(
+            cursFromCenterX / 120
+        )}deg) translateZ(10px); 
+        -webkit-transform: perspective(500px) rotateX(${cursFromCenterY / 120}deg) rotateY(${-(
+            cursFromCenterX / 120
+        )}deg) translateZ(10px);`
     );
 
-    const invertedX = Math.sign(cursFromCenterX) > 0 ? -Math.abs(cursFromCenterX) : Math.abs(cursFromCenterX);
+    // const invertedX = Math.sign(cursFromCenterX) > 0 ? -Math.abs(cursFromCenterX) : Math.abs(cursFromCenterX);
 });
 
 tiltBox.addEventListener('mouseleave', () => {
-    tiltBox.setAttribute('style', 'transform: rotateX(0) rotateY(0);');
+    tiltBox.setAttribute('style', 'transform: rotateX(0) rotateY(0); -webkit-transform: rotateX(0) rotateY(0);');
 });
