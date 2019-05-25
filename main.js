@@ -15,9 +15,8 @@ const compSteps = [];
 let currentUserStep = 0;
 
 const gameSquare = document.querySelector('.game-box');
-const submit = document.querySelector('#start-game');
-const catMode = document.querySelector('#cat-mode');
 const errorMsg = document.querySelector('#sorry');
+const headerText = document.querySelectorAll('.header-text');
 
 let mode = 'normal';
 
@@ -30,6 +29,22 @@ function startTimer() {
     }, 5000);
 }
 
+const startButton = function() {
+    document.querySelector('.game-over').setAttribute('style', 'display:block;');
+    errorMsg.innerHTML = `<span>Pick a mode before we get started.</span>`;
+    errorMsg.insertAdjacentHTML('beforeend', "<span class='start-over' id='start-game'>Normal Mode</span>");
+    errorMsg.insertAdjacentHTML('beforeend', "<span class='start-over' id='cat-mode'>Cat Mode</span>");
+    document.querySelector('.score').innerHTML = `<span class='calc-score'>${
+        compSteps.length
+    }</span><span class='round'>ROUND</span>`;
+    headerText.forEach(function(title) {
+        title.setAttribute('class', 'header-text appear');
+        title.innerText = 'Get ready!';
+    });
+    document.querySelector('#start-game').addEventListener('click', startGame);
+    document.querySelector('#cat-mode').addEventListener('click', startCatMode);
+};
+
 const startGame = function() {
     errorMsg.setAttribute('style', 'display:none;');
     draw();
@@ -37,7 +52,6 @@ const startGame = function() {
         compShow();
     }, 2000);
 };
-// submit.addEventListener('click', startGame);
 
 const startCatMode = function() {
     errorMsg.setAttribute('style', 'display:none;');
@@ -47,22 +61,6 @@ const startCatMode = function() {
     setTimeout(function() {
         compShow();
     }, 2000);
-};
-// catMode.addEventListener('click', startCatMode);
-
-const startButton = function() {
-    clearTimeout(initial);
-    document.querySelector('.game-over').setAttribute('style', 'display:block;');
-    errorMsg.innerHTML = `<span>Pick a mode before we get started.</span>`;
-    errorMsg.insertAdjacentHTML(
-        'beforeend',
-        "<span onclick='startGame()' class='start-over' id='start-game'>Normal Mode</span>"
-    );
-    errorMsg.insertAdjacentHTML(
-        'beforeend',
-        "<span onclick='startCatMode()' class='start-over' id='cat-mode'>Cat Mode</span>"
-    );
-    document.querySelector('.score').innerHTML = "<span class='calc-score'>1</span><span class='round'>ROUND</span>";
 };
 
 // Draws a random color and adds it to compSteps array.
@@ -91,6 +89,7 @@ gameSquare.addEventListener('click', e => {
         currentUserStep += 1;
         getData(url);
         if (compSteps.length === 0) {
+            clearTimeout(initial);
             startButton();
         } else if (currentGameColor !== userSquare.id) {
             clearTimeout(initial);
@@ -103,9 +102,15 @@ gameSquare.addEventListener('click', e => {
         } else if (currentUserStep === compSteps.length) {
             document.querySelector('.calc-score').innerHTML = compSteps.length + 1;
             document.querySelector('.cats-temp').innerHTML = `<img src="${catBuffer[currentUserStep]}" id="random-cat">
-            <img src="${catBuffer[currentUserStep + 1]}" id="random-cat">`;
+                <img src="${catBuffer[currentUserStep + 1]}" id="random-cat">`;
             clearTimeout(initial);
             draw();
+            headerText.forEach(function(title) {
+                title.innerText = 'Simon says...';
+                title.classList.remove('appear');
+                void title.offsetWidth;
+                title.classList.add('appear');
+            });
             setTimeout(function() {
                 compShow();
             }, 2000);
@@ -137,14 +142,23 @@ const compShow = function() {
             startTimer();
         }, 1250 * index);
     });
+    setTimeout(function() {
+        headerText.forEach(function(title) {
+            title.innerText = 'Your turn!';
+            title.classList.remove('appear');
+            void title.offsetWidth;
+            title.classList.add('appear');
+        });
+    }, 1250 * compSteps.length + 1);
     currentUserStep = 0;
 };
 
 function reload() {
+    errorMsg.setAttribute('style', 'display:none;');
     location.reload();
 }
 
-// //////////////////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////  // Random Cat API
 
 const getData = function(myUrl) {
     fetch(myUrl, {
@@ -167,20 +181,19 @@ document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < 4; i++) {
         getData(url);
     }
-    const promise = new Promise(function(resolve, reject) {
+    const promise = new Promise(function(resolve) {
         setTimeout(function() {
             resolve(catBuffer);
         }, 500);
     });
 
-    promise.then(function(value) {
+    promise.then(function() {
         document.querySelector('.cats-temp').innerHTML = `<img src="${catBuffer[0]}" id="random-cat">
         <img src="${catBuffer[1]}" id="random-cat">`;
     });
 });
 
-// ////////////////////////////////////
-// Tilt effect
+// ////////////////////////////////////  // Tilt effect
 
 const lightBox = document.querySelector('.js-tilt-container');
 lightBox.addEventListener('mousemove', e => {
@@ -192,21 +205,6 @@ lightBox.addEventListener('mousemove', e => {
 });
 
 const tiltBox = document.querySelector('.js-tilt-container');
-const scoreCard = document.querySelector('.score');
-window.addEventListener('load', () => {
-    scoreCard.setAttribute(
-        'style',
-        `transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px); 
-        -webkit-transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px);`
-    );
-});
-window.addEventListener('resize', () => {
-    scoreCard.setAttribute(
-        'style',
-        `transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px); 
-        -webkit-transform: translateY(${(tiltBox.offsetHeight - 100) / 2}px);`
-    );
-});
 
 tiltBox.addEventListener('mousemove', e => {
     const left = tiltBox.offsetLeft;
@@ -224,10 +222,8 @@ tiltBox.addEventListener('mousemove', e => {
             cursFromCenterX / 120
         )}deg) translateZ(10px);`
     );
-
-    // const invertedX = Math.sign(cursFromCenterX) > 0 ? -Math.abs(cursFromCenterX) : Math.abs(cursFromCenterX);
 });
 
 tiltBox.addEventListener('mouseleave', () => {
-    tiltBox.setAttribute('style', 'transform: rotateX(0) rotateY(0); -webkit-transform: rotateX(0) rotateY(0);');
+    tiltBox.setAttribute('style', 'transform: rotateX(0) rotateY(0); -webkit-transform: rotateX(0) rotateY(0) ;');
 });
