@@ -38,6 +38,7 @@ h1 {
    right: 0;
    margin: 0 auto;
    width: fit-content;
+   width: -moz-fit-content;
    font-size: calc(32px + 3.8vw);
    font-family: Verdana, serif;
    letter-spacing: 6px;
@@ -67,12 +68,11 @@ h1 {
    left: 0;
    right: 0;
    margin: auto;
-   top: 0;
-   bottom: 0;
+   top: 50%;
    width: 460px;
    max-width: 80%;
-   height: fit-content;
    z-index: 30;
+   transform: translateY(-50%);
 }
 
 #sorry {
@@ -81,6 +81,8 @@ h1 {
    font-family: Verdana, serif;
    display: flex;
    flex-wrap: wrap;
+   line-height: 1.5;
+   text-align: center;
 }
 
 #sorry span:nth-of-type(1) {
@@ -107,6 +109,9 @@ h1 {
 
 #real-answer {
    font-weight: 900;
+   background-color: lightgray;
+   padding: 2px 12px;
+   border-radius: 20px;
 }
 
 .game-box {
@@ -119,53 +124,6 @@ h1 {
    flex-wrap: wrap;
    position: relative;
    margin-top: 96px;
-}
-
-.score {
-   position: absolute;
-   height: 100px;
-   width: 100px;
-   border-radius: 100px;
-   top: 0;
-   bottom: 0;
-   left: 0;
-   right: 0;
-   margin: auto;
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   font-family: Verdana, serif;
-   font-weight: 900;
-   background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
-   text-transform: uppercase;
-   letter-spacing: -2px;
-   font-size: 24px;
-   color: #6d5bdc;
-}
-
-.cats-temp {
-   display: none;
-}
-
-.calc-score {
-   font-size: 42px;
-   padding-top: 12px;
-}
-
-.round {
-   font-size: 16px;
-   border-radius: 4px;
-   padding: 6px;
-   display: inline-block;
-   position: relative;
-   margin-left: 56px;
-   margin-right: 56px;
-   margin-top: 6px;
-   background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
-   box-shadow: 0 8px 24px 0 rgba(151, 157, 170, 0.4), inset 0 0 1px 0 #979daa;
-   color: #000000;
-   letter-spacing: -1px;
 }
 
 #red {
@@ -201,6 +159,50 @@ h1 {
    z-index: -1;
 }
 
+.score {
+   position: absolute;
+   height: 100px;
+   width: 100px;
+   border-radius: 100px;
+   top: 0;
+   bottom: 0;
+   left: 0;
+   right: 0;
+   margin: auto;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   font-family: Verdana, serif;
+   font-weight: 900;
+   background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
+   text-transform: uppercase;
+   letter-spacing: -2px;
+   font-size: 24px;
+   color: #6d5bdc;
+}
+
+.calc-score {
+   font-size: 42px;
+   padding-top: 12px;
+}
+
+.round {
+   font-size: 16px;
+   border-radius: 4px;
+   padding: 6px;
+   display: inline-block;
+   position: relative;
+   margin-left: 56px;
+   margin-right: 56px;
+   margin-top: 6px;
+   background: linear-gradient(90deg, #e3ffe7 0%, #d9e7ff 100%);
+   box-shadow: 0 8px 24px 0 rgba(151, 157, 170, 0.4), inset 0 0 1px 0 #979daa;
+   color: #000000;
+   letter-spacing: -1px;
+}
+
+/* Flash animation on squares */
 .flash {
    -webkit-animation-name: flash-animation;
    -webkit-animation-duration: 1s;
@@ -275,8 +277,6 @@ h1 {
    pointer-events: none;
 }
 
-/* // =========================== */
-
 .js-tilt-container {
    -webkit-transition: transform 0.1s ease;
    -webkit-transform: rotateX(0) rotateY(0);
@@ -293,4 +293,9 @@ h1 {
    transform: rotateX(0) rotateY(0);
    transition-timing-function: cubic-bezier(0.42, 0, 0, 1);
    transition-duration: 1.5s;
+}
+
+/* Loads cats into the dom so they're ready to go. */
+.cats-temp {
+   display: none;
 }
