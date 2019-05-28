@@ -64,11 +64,12 @@ Contains all elements that need to be loaded prior to any user interactions. Thi
 3. Start Button
 4. Audio Files
 
-**CAT API**
+**CAT API:**
 The app is fetching from the [Cat API](https://thecatapi.com) to produce a series of cat images in "Cat Mode". When the page loads, the app calls the API and preloads to cat photos into a "buffer". This was set up so that when the user selects "Cat Mode" the patter can display right away without taking time to load an image. There will always be a buffer of tow cat image loaded before they are needed to ensure a more seamless gameplay experience.
 
 ```
 // Preloads two cat images into the buffer.
+
 document.addEventListener('DOMContentLoaded', () => {
     for (let i = 0; i < 4; i += 1) {getData(url);}
     const promise = new Promise(function(resolve) {
@@ -88,16 +89,16 @@ document.addEventListener('DOMContentLoaded', () => {
 ---
 
 -  **main.js**
-   **style.css**
-   **index.html**
-   **/sounds:** Contains four sound files used when a user clicks on a square.
-   **README.md**
+-  **style.css**
+-  **index.html**
+-  **/sounds:** Contains four sound files used when a user clicks on a square.
+-  **README.md**
 
 ##### Contribution Guidelines
 
 Fork and clone this repo, contribute from a new branch.
 
-Main repository: https://github.com/dbudimir/simon
-Issue tracker: https://github.com/dbudimir/simon/issues
+-  Main repository: https://github.com/dbudimir/simon
+-  Issue tracker: https://github.com/dbudimir/simon/issues
 
 Contact me: dav.budimir@gmail.com
