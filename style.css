@@ -39,9 +39,10 @@ h1 {
    margin: 0 auto;
    width: fit-content;
    width: -moz-fit-content;
-   font-size: calc(32px + 3.8vw);
+   font-size: calc(18px + 3.8vw);
    font-family: Verdana, serif;
    letter-spacing: 6px;
+   top: 24px;
 }
 
 .appear {
