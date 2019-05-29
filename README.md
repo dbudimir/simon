@@ -10,7 +10,7 @@ I chose this project because it required solving a number of problems related to
 
 ---
 
-##### MVP Features (Completed)
+#### MVP Features (Completed)
 
 **Normal Game Mode**
 Each square flashes white indicating to the user what their click pattern should be.
@@ -21,7 +21,7 @@ When the user completes the pattern the round counter will increment by 1.
 **Responsive Design**
 The game functions the same way on screen sizes for all major devices. The user can load the game at one window size, adjust the window and continue playing all in the same instance. This implementation has **no media queries** but does require some javascript to make the design adjust to the window in real-time.
 
-##### Additional Features (Completed)
+#### Additional Features (Completed)
 
 **User Timeout**
 If it's the users turn to input the pattern and they take no action for 5 seconds, they will lose the game. All error states produce a modal inside of the DOM instead of a browser alert.
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
 -  **/sounds:** Contains four sound files used when a user clicks on a square.
 -  **README.md**
 
-##### Contribution Guidelines
+#### Contribution Guidelines
 
 Fork and clone this repo, contribute from a new branch.
 
